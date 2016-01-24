@@ -26,13 +26,15 @@ namespace ExcelHelper.Operating
 
             var request = HttpContext.Current.Request;
 
-            if (request.UserAgent.ToLower().IndexOf("firefox") > -1)
+
+            if (request.UserAgent.ToLower().IndexOf("msie") > -1 || request.UserAgent.ToLower().IndexOf("trident") > -1)//前面是IE10，后面是IE11
+            {
+                fileName = HttpUtility.UrlEncode(fileName, Encoding.UTF8);
+            }
+            else if (request.UserAgent.ToLower().IndexOf("firefox") > -1)
             {
                 fileName = "\"" + fileName + "\"";
             }
-
-            fileName = HttpUtility.UrlEncode(fileName, Encoding.UTF8);
-
 
             var response = HttpContext.Current.Response;
             response.Clear();
