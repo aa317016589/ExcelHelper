@@ -18,13 +18,13 @@ namespace UnitTestProject
 
             for (int i = 0; i < 8; i++)
             {
-                SumAnalysisX SumAnalysisX1 = new SumAnalysisX() { ClassName = i.ToString() + "班级", MaxScore = 100 + i, Total = 1000 + i, TotalAverage = 10 + i };
+                SumAnalysisX SumAnalysisX1 = new SumAnalysisX() { ClassName = null, MaxScore = 100 + i, Total = 1000 + i, TotalAverage = 10 + i };
 
                 List<SubjectScoreDetailX> ssd = new List<SubjectScoreDetailX>();
 
                 for (int j = 0; j < 4; j++)
                 {
-                    ssd.Add(new SubjectScoreDetailX() { Score = 10000 + j, TypeName = "kemu " + j.ToString(), TypeId = j });
+                    ssd.Add(new SubjectScoreDetailX() { Score = null, TypeName = "kemu " + j.ToString(), TypeId = j });
                 }
 
                 SumAnalysisX1.SubjectScoreDetails = ssd;

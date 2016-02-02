@@ -11,6 +11,7 @@ namespace UnitTestProject.Model
     public class SumAnalysisX : IExcelModelBase
     {
         [DisplayName("班级")]
+        [DefaultValue("未知")]
         public String ClassName { get; set; }
 
         /// <summary>

@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationHelper.cs" />
+    <Compile Include="EnumService.cs" />
     <Compile Include="CellExtensions.cs" />
     <Compile Include="CommonEqualityComparer.cs" />
     <Compile Include="ExcelModelsPropertyManage.cs" />

@@ -173,13 +173,13 @@ namespace ExcelHelper.Operating
 
             buildContext.Row = row;
 
-            IList<PropertyInfo> checkPropertyInfos = ExcelModelsPropertyManage.CreatePropertyInfos(type);
+            IList<PropertyInfoDetail> checkPropertyInfos = ExcelModelsPropertyManage.CreatePropertyInfos(type);
 
             int i = 0;
 
-            foreach (PropertyInfo property in checkPropertyInfos)
+            foreach (PropertyInfoDetail propertyInfoDetail in checkPropertyInfos)
             {
-                DisplayNameAttribute dn = property.GetCustomAttributes(typeof(DisplayNameAttribute), false).SingleOrDefault() as DisplayNameAttribute;
+                DisplayNameAttribute dn = propertyInfoDetail.PropertyInfoV.GetCustomAttributes(typeof(DisplayNameAttribute), false).SingleOrDefault() as DisplayNameAttribute;
 
                 if (dn != null)
                 {
@@ -187,7 +187,7 @@ namespace ExcelHelper.Operating
                     continue;
                 }
 
-                Type t = property.PropertyType;
+                Type t = propertyInfoDetail.PropertyInfoV.PropertyType;
 
                 if (t.IsGenericType)
                 {
@@ -219,7 +219,7 @@ namespace ExcelHelper.Operating
         #region AddValue
         private ISheet AddValue(ISheet sheet, ISheetDataWrapper sheetDetailDataWrapper, Type type)
         {
-            IList<PropertyInfo> checkPropertyInfos = ExcelModelsPropertyManage.CreatePropertyInfos(type);
+            IList<PropertyInfoDetail> checkPropertyInfos = ExcelModelsPropertyManage.CreatePropertyInfos(type);
 
             Int32 cellCount = 0;
 
@@ -235,13 +235,15 @@ namespace ExcelHelper.Operating
 
                 buildContext.Row = newRow;
 
-                foreach (PropertyInfo property in checkPropertyInfos)
+              
+
+                foreach (PropertyInfoDetail propertyInfoDeatil in checkPropertyInfos)
                 {
-                    Object obj = property.GetValue(item, null);
+                    Object obj = propertyInfoDeatil.PropertyInfoV.GetValue(item, null);
 
-                    Type t = property.PropertyType;
+                    Type t = propertyInfoDeatil.PropertyInfoV.PropertyType;
 
-                    ICell cell;
+  
 
                     if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                     {
@@ -252,17 +254,19 @@ namespace ExcelHelper.Operating
                             continue;
                         }
 
-                        foreach (var v in sheetDetailDataWrapper.Titles)
+                        foreach (var title in sheetDetailDataWrapper.Titles)
                         {
-                            IExtendedBase sv = ssd.Where(s => s.TypeId == v.TypeId).SingleOrDefault();
+                            IExtendedBase sv = ssd.Where(s => s.TypeId == title.TypeId).SingleOrDefault();
 
-                            SetCell(newRow, cellCount++, sv.TypeValue);
+                            Object val = ExcelModelsPropertyManage.GetExtendedDefaultValue(sv.GetType());
+
+                            SetCell(newRow, cellCount++, sv.TypeValue == null && val != null ? val : obj);
                         }
 
                         continue;
                     }
- 
-                    SetCell(newRow, cellCount++, obj);
+
+                    SetCell(newRow, cellCount++, obj == null && propertyInfoDeatil.DefaultVale != null ? propertyInfoDeatil.DefaultVale : obj);
                 }
 
                 StartRow++;
@@ -315,7 +319,7 @@ namespace ExcelHelper.Operating
 
             Type type = typeof(T);
 
-            IList<PropertyInfo> checkPropertyInfos = ExcelModelsPropertyManage.CreatePropertyInfos(type);
+            IList<PropertyInfoDetail> checkPropertyInfos = ExcelModelsPropertyManage.CreatePropertyInfos(type);
 
             try
             {
@@ -373,7 +377,7 @@ namespace ExcelHelper.Operating
                                 }
                             }
 
-                            PropertyInfo pinfo = checkPropertyInfos[f];
+                            PropertyInfo pinfo = checkPropertyInfos[f].PropertyInfoV;
 
                             if (pinfo.PropertyType.Name != b.GetType().Name) //类型不一样的时候，强转
                             {
@@ -402,7 +406,7 @@ namespace ExcelHelper.Operating
             }
         }
 
-        #endregion
+        #endregion       
     }
 
     public class BuildContext

@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace UnitTestProject.Model
 {
     public struct SubjectScoreDetailX : IExtendedBase
     {
+        [DefaultValue("缺考")]
         public object TypeValue
         {
             get
@@ -20,6 +22,7 @@ namespace UnitTestProject.Model
                 Score = (Double?)value;
             }
         }
+
 
         public Double? Score { get; set; }
 
