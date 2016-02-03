@@ -235,15 +235,11 @@ namespace ExcelHelper.Operating
 
                 buildContext.Row = newRow;
 
-              
-
                 foreach (PropertyInfoDetail propertyInfoDeatil in checkPropertyInfos)
                 {
                     Object obj = propertyInfoDeatil.PropertyInfoV.GetValue(item, null);
 
                     Type t = propertyInfoDeatil.PropertyInfoV.PropertyType;
-
-  
 
                     if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                     {
@@ -258,7 +254,12 @@ namespace ExcelHelper.Operating
                         {
                             IExtendedBase sv = ssd.Where(s => s.TypeId == title.TypeId).SingleOrDefault();
 
-                            Object val = ExcelModelsPropertyManage.GetExtendedDefaultValue(sv.GetType());
+                            Object val = null;
+
+                            if (sv == null)
+                            {
+                                val = ExcelModelsPropertyManage.GetExtendedDefaultValue(sv.GetType());
+                            }
 
                             SetCell(newRow, cellCount++, sv.TypeValue == null && val != null ? val : obj);
                         }
