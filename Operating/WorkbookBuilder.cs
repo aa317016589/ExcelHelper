@@ -38,7 +38,7 @@ namespace ExcelHelper.Operating
 
                     _centerStyle.Alignment = HorizontalAlignment.Center;
 
-                    _centerStyle.VerticalAlignment = VerticalAlignment.Center;
+                    _centerStyle.VerticalAlignment = VerticalAlignment.Justify;
                 }
 
                 return _centerStyle;
@@ -70,6 +70,8 @@ namespace ExcelHelper.Operating
             else
             {
                 sheet = currentWorkbook.CreateSheet(sheetDetail.SheetName);
+
+                StartRow = 0;
             }
 
             buildContext.Sheet = sheet;
@@ -256,12 +258,17 @@ namespace ExcelHelper.Operating
 
                             Object val = null;
 
-                            if (sv == null)
+                            if (sv == null || sv.TypeValue == null)
                             {
-                                val = ExcelModelsPropertyManage.GetExtendedDefaultValue(sv.GetType());
+                                val = ExcelModelsPropertyManage.GetExtendedDefaultValue(title.GetType());
+                            }
+                            else
+                            {
+                                val = sv.TypeValue;
                             }
 
-                            SetCell(newRow, cellCount++, sv.TypeValue == null && val != null ? val : obj);
+
+                            SetCell(newRow, cellCount++, val);
                         }
 
                         continue;
