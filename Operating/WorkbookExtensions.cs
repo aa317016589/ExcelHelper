@@ -27,11 +27,11 @@ namespace ExcelHelper.Operating
             var request = HttpContext.Current.Request;
 
 
-            if (request.UserAgent.ToLower().IndexOf("msie") > -1 || request.UserAgent.ToLower().IndexOf("trident") > -1)//前面是IE10，后面是IE11
+            if (request.UserAgent.ToLower().Contains("msie") || request.UserAgent.ToLower().Contains("trident"))//前面是IE10，后面是IE11
             {
                 fileName = HttpUtility.UrlEncode(fileName, Encoding.UTF8);
             }
-            else if (request.UserAgent.ToLower().IndexOf("firefox") > -1)
+            else if (request.UserAgent.ToLower().Contains("firefox") )
             {
                 fileName = "\"" + fileName + "\"";
             }
