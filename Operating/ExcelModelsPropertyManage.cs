@@ -11,9 +11,9 @@ namespace ExcelHelper.Operating
 {
     public static class ExcelModelsPropertyManage
     {
-        private static Dictionary<String, IList<PropertyInfoDetail>> PropertyInfos;
+        private static readonly Dictionary<String, IList<PropertyInfoDetail>> PropertyInfos;
 
-        private static Dictionary<String, Object> ExtendedDefaultValue;
+        private static readonly Dictionary<String, Object> ExtendedDefaultValue;
 
         static ExcelModelsPropertyManage()
         {
@@ -40,12 +40,12 @@ namespace ExcelHelper.Operating
             {
                 Object[] d = item.GetCustomAttributes(false);
 
-                if (d.Where(s => s.GetType() == typeof(IgnoreAttribute)).Any())
+                if (d.Any(s => s.GetType() == typeof(IgnoreAttribute)))
                 {
                     continue;
                 }
 
-                DefaultValueAttribute dv = d.Where(s => s.GetType() == typeof(DefaultValueAttribute)).SingleOrDefault() as DefaultValueAttribute;
+                DefaultValueAttribute dv = d.SingleOrDefault(s => s.GetType() == typeof(DefaultValueAttribute)) as DefaultValueAttribute;
 
                 checkPropertyInfos.Add(new PropertyInfoDetail() { PropertyInfoV = item, DefaultVale = dv == null ? null : dv.Value });
             }
@@ -67,7 +67,7 @@ namespace ExcelHelper.Operating
 
 
 
-            PropertyInfo p = t.GetProperties().Where(s => s.Name == "TypeValue").SingleOrDefault();
+            PropertyInfo p = t.GetProperties().SingleOrDefault(s => s.Name == "TypeValue");
              
             if (p == null)
             {

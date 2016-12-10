@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExcelHelper.Operating.Model;
 
 namespace ExcelHelper.Operating
 {
@@ -12,57 +13,57 @@ namespace ExcelHelper.Operating
     /// </summary>
     public class SheetDataCollection : ICollection<ISheetDataWrapper>
     {
-        IList<ISheetDataWrapper> SheetDetailDataWrappers;
- 
+        private readonly IList<ISheetDataWrapper> _sheetDetailDataWrappers;
+
         public SheetDataCollection()
         {
-            this.SheetDetailDataWrappers = new List<ISheetDataWrapper>();
+            this._sheetDetailDataWrappers = new List<ISheetDataWrapper>();
         }
 
         public void Add(ISheetDataWrapper item)
         {
-            SheetDetailDataWrappers.Add(item);
+            _sheetDetailDataWrappers.Add(item);
         }
 
         public bool Contains(ISheetDataWrapper item)
         {
-            return SheetDetailDataWrappers.Contains(item);
+            return _sheetDetailDataWrappers.Contains(item);
         }
 
         public void CopyTo(ISheetDataWrapper[] array, int arrayIndex)
         {
-            SheetDetailDataWrappers.CopyTo(array, arrayIndex);
+            _sheetDetailDataWrappers.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(ISheetDataWrapper item)
         {
-            return SheetDetailDataWrappers.Remove(item);
+            return _sheetDetailDataWrappers.Remove(item);
         }
 
         IEnumerator<ISheetDataWrapper> IEnumerable<ISheetDataWrapper>.GetEnumerator()
         {
-            return SheetDetailDataWrappers.GetEnumerator();
+            return _sheetDetailDataWrappers.GetEnumerator();
         }
 
 
         public void Clear()
         {
-            SheetDetailDataWrappers.Clear();
+            _sheetDetailDataWrappers.Clear();
         }
 
         public int Count
         {
-            get { return SheetDetailDataWrappers.Count; }
+            get { return _sheetDetailDataWrappers.Count; }
         }
 
         public bool IsReadOnly
         {
-            get { return SheetDetailDataWrappers.IsReadOnly; }
+            get { return _sheetDetailDataWrappers.IsReadOnly; }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return SheetDetailDataWrappers.GetEnumerator();
+            return _sheetDetailDataWrappers.GetEnumerator();
         }
     }
 

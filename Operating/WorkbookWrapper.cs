@@ -24,7 +24,7 @@ namespace ExcelHelper.Operating
 
         private HSSFWorkbookBuilder workbook;
 
-        private Boolean IsFinish = false;
+        private Boolean _isFinish = false;
 
         public void AddSheetDetail(ISheetDetail sheetDetail)
         {
@@ -33,7 +33,7 @@ namespace ExcelHelper.Operating
 
         private void Insert()
         {
-            if (IsFinish)
+            if (_isFinish)
             {
                 return;
             }
@@ -43,7 +43,7 @@ namespace ExcelHelper.Operating
                 workbook.Insert(item);
             }
 
-            IsFinish = true;
+            _isFinish = true;
         }
 
 
@@ -51,14 +51,14 @@ namespace ExcelHelper.Operating
         {
             Insert();
  
-            workbook.currentWorkbook.Save(path);
+            workbook.CurrentWorkbook.Save(path);
         }
 
         public void Download(String fileName)
         {
             Insert();
 
-            workbook.currentWorkbook.Download(fileName);
+            workbook.CurrentWorkbook.Download(fileName);
         }
     }
 }

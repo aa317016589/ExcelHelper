@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace ExcelHelper.Operating
+namespace ExcelHelper.Operating.Model
 {
    public interface IExtendedBase
     {

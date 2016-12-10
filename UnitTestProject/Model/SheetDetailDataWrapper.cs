@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExcelHelper.Operating.Model;
 
 namespace UnitTestProject.Model
 {
     public class SheetDetailDataWrapper : ISheetDataWrapper
     {
-        public virtual String DataName { get; set; }
+        public String DataName { get; set; }
 
-        public virtual IEnumerable<IExcelModelBase> Datas { get; set; }
+        public IEnumerable<IExcelModelBase> Datas { get; set; }
 
         public Int32 EmptyIntervalRow { get; set; }
 
@@ -25,7 +26,7 @@ namespace UnitTestProject.Model
         {
             this.DataName = dataName;
 
-            this.Datas = datas == null ? new List<IExcelModelBase>() : datas;
+            this.Datas = datas ?? new List<IExcelModelBase>();
 
             this.EmptyIntervalRow = 2;
 
@@ -42,7 +43,7 @@ namespace UnitTestProject.Model
             {
                 if (_titles == null)
                 {
-                    if (Datas == null || Datas.Count() == 0)
+                    if (Datas == null || !Datas.Any())
                     {
                         return new List<IExtendedBase>();
                     }
@@ -59,11 +60,11 @@ namespace UnitTestProject.Model
 
     public class SheetDetail : ISheetDetail
     {
-        public virtual String SheetName { get; set; }
+        public String SheetName { get; set; }
 
-        public virtual Boolean IsContinue { get; set; }
+        public Boolean IsContinue { get; set; }
 
-        public virtual SheetDataCollection SheetDetailDataWrappers { get; set; }
+        public SheetDataCollection SheetDetailDataWrappers { get; set; }
 
         public SheetDetail(String sheetName, SheetDataCollection datas = null)
         {

@@ -13,15 +13,15 @@ namespace UnitTestProject.Model
     /// </summary>
     public class PointsCoupon
     {
-        private Int32 pointsCouponId;
+        private Int32 _pointsCouponId;
         [Ignore]
         public Int32 PointsCouponId
         {
-            get { return pointsCouponId; }
-            set { pointsCouponId = value; }
+            get { return _pointsCouponId; }
+            set { _pointsCouponId = value; }
         }
 
-        private DateTime createDateTime;
+        private DateTime _createDateTime;
 
         /// <summary>
         /// 创造日期
@@ -30,19 +30,19 @@ namespace UnitTestProject.Model
         [Ignore]
         public DateTime CreateDateTime
         {
-            get { return createDateTime; }
-            set { createDateTime = value; }
+            get { return _createDateTime; }
+            set { _createDateTime = value; }
         }
 
-        private String redemptionCode;
+        private String _redemptionCode;
         /// <summary>
         /// 兑换码
         /// </summary>
         [DisplayName("兑换码")]
         public String RedemptionCode
         {
-            get { return redemptionCode; }
-            set { redemptionCode = value; }
+            get { return _redemptionCode; }
+            set { _redemptionCode = value; }
         }
 
 
@@ -57,27 +57,27 @@ namespace UnitTestProject.Model
             set { parValue = value; }
         }
 
-        private DateTime pastDateTime;
+        private DateTime _pastDateTime;
         /// <summary>
         /// 过期日期
         /// </summary>
         [DisplayName("过期日期")]
         public DateTime PastDateTime
         {
-            get { return pastDateTime; }
-            set { pastDateTime = value; }
+            get { return _pastDateTime; }
+            set { _pastDateTime = value; }
         }
 
 
-        private PointsCouponTypes pointsCouponType;
+        private PointsCouponTypes _pointsCouponTypes;
         /// <summary>
         /// 类型
         /// </summary>
         [DisplayName("类型")]
-        public PointsCouponTypes PointsCouponType
+        public PointsCouponTypes PointsCouponTypes
         {
-            get { return pointsCouponType; }
-            set { pointsCouponType = value; }
+            get { return _pointsCouponTypes; }
+            set { _pointsCouponTypes = value; }
         }
 
 
@@ -104,7 +104,7 @@ namespace UnitTestProject.Model
         {
             RedemptionCode = new Random().Next(1, 99999).ToString();
 
-            createDateTime = DateTime.Now;
+            _createDateTime = DateTime.Now;
 
             isUsed = false;
         }

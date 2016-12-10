@@ -5,6 +5,7 @@ using UnitTestProject.Model;
 using ExcelHelper.Operating;
 using System.Linq;
 using System.IO;
+using ExcelHelper.Operating.Model;
 
 namespace UnitTestProject
 {
@@ -14,11 +15,11 @@ namespace UnitTestProject
         [TestMethod]
         public void WorkbookInsert()
         {
-            List<SumAnalysisX> SumAnalysisXs = new List<SumAnalysisX>();
+            List<SumAnalysisX> sumAnalysisXs = new List<SumAnalysisX>();
 
             for (int i = 0; i < 8; i++)
             {
-                SumAnalysisX SumAnalysisX1 = new SumAnalysisX() { ClassName = null, MaxScore = 100 + i, Total = 1000 + i, TotalAverage = 10 + i };
+                SumAnalysisX sumAnalysisX1 = new SumAnalysisX() { ClassName = null, MaxScore = 100 + i, Total = 1000 + i, TotalAverage = 10 + i };
 
                 List<SubjectScoreDetailX> ssd = new List<SubjectScoreDetailX>();
 
@@ -27,9 +28,9 @@ namespace UnitTestProject
                     ssd.Add(new SubjectScoreDetailX() { Score = null, TypeName = "kemu " + j.ToString(), TypeId = j });
                 }
 
-                SumAnalysisX1.SubjectScoreDetails = ssd;
+                sumAnalysisX1.SubjectScoreDetails = ssd;
 
-                SumAnalysisXs.Add(SumAnalysisX1);
+                sumAnalysisXs.Add(sumAnalysisX1);
 
             }
 
@@ -37,7 +38,7 @@ namespace UnitTestProject
 
             SheetDetail sd = new SheetDetail("sxf");
 
-            SheetDetailDataWrapper sheetDetailDataWrapper = new SheetDetailDataWrapper("No.1", SumAnalysisXs.Cast<IExcelModelBase>());
+            SheetDetailDataWrapper sheetDetailDataWrapper = new SheetDetailDataWrapper("No.1", sumAnalysisXs.Cast<IExcelModelBase>());
 
             sd.SheetDetailDataWrappers.Add(sheetDetailDataWrapper);
 

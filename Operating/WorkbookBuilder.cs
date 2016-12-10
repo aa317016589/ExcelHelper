@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
 using System.Collections;
+using ExcelHelper.Operating.Model;
 
 
 namespace ExcelHelper.Operating
@@ -15,16 +16,16 @@ namespace ExcelHelper.Operating
     {
         protected WorkbookBuilder()
         {
-            currentWorkbook = CreateWorkbook();
+            CurrentWorkbook = CreateWorkbook();
 
-            buildContext = new BuildContext() { WorkbookBuilder = this, Workbook = currentWorkbook };
+            _buildContext = new BuildContext() { WorkbookBuilder = this, Workbook = CurrentWorkbook };
         }
 
         public delegate void BuildEventHandler(BuildContext context);
 
         protected abstract IWorkbook CreateWorkbook();
 
-        public IWorkbook currentWorkbook;
+        public IWorkbook CurrentWorkbook;
 
         private ICellStyle _centerStyle;
 
@@ -34,7 +35,7 @@ namespace ExcelHelper.Operating
             {
                 if (_centerStyle == null)
                 {
-                    _centerStyle = currentWorkbook.CreateCellStyle();
+                    _centerStyle = CurrentWorkbook.CreateCellStyle();
 
                     _centerStyle.Alignment = HorizontalAlignment.Center;
 
@@ -45,10 +46,10 @@ namespace ExcelHelper.Operating
             }
         }
 
-        private Int32 StartRow = 0;//起始行
+        private Int32 _startRow = 0;//起始行
 
 
-        private BuildContext buildContext;
+        private readonly BuildContext _buildContext;
  
         public event BuildEventHandler OnHeadCellSetAfter;
  
@@ -63,18 +64,18 @@ namespace ExcelHelper.Operating
 
             if (sheetDetail.IsContinue)
             {
-                sheet = currentWorkbook.GetSheetAt(currentWorkbook.NumberOfSheets - 1);
+                sheet = CurrentWorkbook.GetSheetAt(CurrentWorkbook.NumberOfSheets - 1);
 
-                StartRow = sheet.LastRowNum + 1;
+                _startRow = sheet.LastRowNum + 1;
             }
             else
             {
-                sheet = currentWorkbook.CreateSheet(sheetDetail.SheetName);
+                sheet = CurrentWorkbook.CreateSheet(sheetDetail.SheetName);
 
-                StartRow = 0;
+                _startRow = 0;
             }
 
-            buildContext.Sheet = sheet;
+            _buildContext.Sheet = sheet;
 
             sheet = DataToSheet(sheetDetail.SheetDetailDataWrappers, sheet);
 
@@ -89,7 +90,7 @@ namespace ExcelHelper.Operating
         {
             foreach (var sheetDetailDataWrapper in sheetDetailDataWrappers)
             {
-                if (sheetDetailDataWrapper.Datas == null || sheetDetailDataWrapper.Datas.Count() == 0)
+                if (sheetDetailDataWrapper.Datas == null || !sheetDetailDataWrapper.Datas.Any())
                 {
                     continue;
                 }
@@ -103,7 +104,7 @@ namespace ExcelHelper.Operating
 
                 sheet = AddValue(sheet, sheetDetailDataWrapper, type);
 
-                StartRow = StartRow + sheetDetailDataWrapper.EmptyIntervalRow;
+                _startRow = _startRow + sheetDetailDataWrapper.EmptyIntervalRow;
             }
 
             return sheet;
@@ -157,23 +158,23 @@ namespace ExcelHelper.Operating
 
             if (!String.IsNullOrEmpty(sheetDetailDataWrapper.DataName))
             {
-                titleRow = sheet.CreateRow(StartRow);
+                titleRow = sheet.CreateRow(_startRow);
 
-                buildContext.Row = titleRow;
+                _buildContext.Row = titleRow;
  
-                StartRow++;
+                _startRow++;
 
                 titleCell = SetCell(titleRow, 0, sheetDetailDataWrapper.DataName);
 
                 if (OnHeadCellSetAfter != null)
                 {
-                    OnHeadCellSetAfter(buildContext);
+                    OnHeadCellSetAfter(_buildContext);
                 }
             }
 
-            IRow row = sheet.CreateRow(StartRow);
+            IRow row = sheet.CreateRow(_startRow);
 
-            buildContext.Row = row;
+            _buildContext.Row = row;
 
             IList<PropertyInfoDetail> checkPropertyInfos = ExcelModelsPropertyManage.CreatePropertyInfos(type);
 
@@ -193,7 +194,7 @@ namespace ExcelHelper.Operating
 
                 if (t.IsGenericType)
                 {
-                    if (sheetDetailDataWrapper.Titles == null || sheetDetailDataWrapper.Titles.Count() == 0)
+                    if (sheetDetailDataWrapper.Titles == null || !sheetDetailDataWrapper.Titles.Any())
                     {
                         continue;
                     }
@@ -212,7 +213,7 @@ namespace ExcelHelper.Operating
                 titleCell.CellStyle = this.CenterStyle;
             }
 
-            StartRow++;
+            _startRow++;
 
             return sheet;
         }
@@ -229,13 +230,13 @@ namespace ExcelHelper.Operating
             {
                 if (item == null)
                 {
-                    StartRow++;
+                    _startRow++;
                     continue;
                 }
 
-                IRow newRow = sheet.CreateRow(StartRow);
+                IRow newRow = sheet.CreateRow(_startRow);
 
-                buildContext.Row = newRow;
+                _buildContext.Row = newRow;
 
                 foreach (PropertyInfoDetail propertyInfoDeatil in checkPropertyInfos)
                 {
@@ -254,7 +255,7 @@ namespace ExcelHelper.Operating
 
                         foreach (var title in sheetDetailDataWrapper.Titles)
                         {
-                            IExtendedBase sv = ssd.Where(s => s.TypeId == title.TypeId).SingleOrDefault();
+                            IExtendedBase sv = ssd.SingleOrDefault(s => s.TypeId == title.TypeId);
 
                             Object val = null;
 
@@ -277,7 +278,7 @@ namespace ExcelHelper.Operating
                     SetCell(newRow, cellCount++, obj == null && propertyInfoDeatil.DefaultVale != null ? propertyInfoDeatil.DefaultVale : obj);
                 }
 
-                StartRow++;
+                _startRow++;
                 cellCount = 0;
             }
 
@@ -300,11 +301,11 @@ namespace ExcelHelper.Operating
 
             SetCellValue(cell, value);
 
-            buildContext.Cell = cell;
+            _buildContext.Cell = cell;
 
             if (OnContentCellSetAfter != null)
             {
-                OnContentCellSetAfter(buildContext);
+                OnContentCellSetAfter(_buildContext);
             }
 
             return cell;
@@ -318,7 +319,6 @@ namespace ExcelHelper.Operating
         /// </summary>
         /// <typeparam name="T">具体对象</typeparam>
         /// <param name="fs"></param>
-        /// <param name="fileName"></param>
         /// <param name="isFirstRowColumn"></param>
         /// <returns></returns>
         public static IEnumerable<T> ExcelToDataTable<T>(Stream fs, bool isFirstRowColumn = false) where T : new()
@@ -375,7 +375,7 @@ namespace ExcelHelper.Operating
                             if (cell.CellType == CellType.Numeric)
                             {
                                 //NPOI中数字和日期都是NUMERIC类型的，这里对其进行判断是否是日期类型
-                                if (HSSFDateUtil.IsCellDateFormatted(cell))//日期类型
+                                if (DateUtil.IsCellDateFormatted(cell))//日期类型
                                 {
                                     b = cell.DateCellValue;
                                 }
@@ -389,7 +389,7 @@ namespace ExcelHelper.Operating
 
                             if (pinfo.PropertyType.Name != b.GetType().Name) //类型不一样的时候，强转
                             {
-                                b = System.ComponentModel.TypeDescriptor.GetConverter(pinfo.PropertyType).ConvertFrom(b.ToString());
+                                b = TypeDescriptor.GetConverter(pinfo.PropertyType).ConvertFrom(b.ToString());
                             }
 
                             type.GetProperty(pinfo.Name).SetValue(t, b, null);
